@@ -13,38 +13,46 @@ using namespace std;
 
 void showArray(const int[], int);
 void sortArray(int[], int);
-void seedArray(int[], int, int);
+int *seedArray(int, int);
 int searchArray(const int[], int, int);
 void gameArray(const int[], int);
+int *newArray(int[], int, int);
+int *addToArray(int[], int, int, int);
+void nearestNumber(const int[], int, int);
 
 int main()
 {
-    int size, *numbers, maxNum;
+    int size, *numbers, maxNum, newSize;
     
     cout << "What size array would you like to create? ";
     cin >> size;
     cout << "What is the max number for the array? ";
     cin >> maxNum;
     
-    numbers = new int[size];
-    
-    seedArray(numbers, size, maxNum);
-    //cout << "\nNow to show the array\n";
-    //showArray(numbers, size);
-    //cout << "\nNow to sort the array\n";
+    numbers = seedArray(size, maxNum);
+    cout << "\nNow to show the array\n";
+    showArray(numbers, size);
+    cout << "\nNow to sort the array\n";
     sortArray(numbers, size);
-    //cout << "\nNow the sorted array\n";
-    //showArray(numbers, size);
+    cout << "\nNow the sorted array\n";
+    showArray(numbers, size);
+    //cout << "\nHow big would you like the new array? ";
+    //cin >> newSize;
     
     gameArray(numbers, size);
     
-    
+    //numbers = addToArray(numbers, newSize, size, maxNum);
+    //cout << endl;
+    //showArray(numbers, newSize);
     
     return 0;
 }
 
-void seedArray(int array[], int size, int maxNum)
+int *seedArray(int size, int maxNum)
 {
+    int *array;
+    array = new int[size];
+    
     int x;
     unsigned int seed = static_cast<unsigned int>(time(0));
     srand(seed);
@@ -52,6 +60,8 @@ void seedArray(int array[], int size, int maxNum)
         x = 1 + rand() % maxNum;
         array[i] = x;
     }
+    
+    return array;
 }
 
 void showArray(const int array[], int size)
@@ -124,6 +134,7 @@ void gameArray(const int array[], int size)
             if (result == -1)
             {
                 cout << "That number is not in the array.\n";
+                nearestNumber(array, size, value);
                 incorrect++;
                 correct = 0;
                 total++;
@@ -144,5 +155,69 @@ void gameArray(const int array[], int size)
     }
 }
 
+int *newArray(int array[], int size, int maxNum)
+{
+    int *numbers;
+    
+    delete [] array;
+    array = new int[size];
+    
+    numbers = seedArray(size, maxNum);
+    
+    return numbers;
+}
 
+int *addToArray(int array[], int size, int currentSize, int maxNum)
+{
+    int *newArray, x;
+    newArray = new int[size];
+    
+    for (int i = 0; i < currentSize; i++) {
+        newArray[i] = array[i];
+    }
+    
+    unsigned int seed = static_cast<unsigned int>(time(0));
+    srand(seed);
+    for (int i = currentSize; i < size; i++) {
+        x = 1 + rand() % maxNum;
+        newArray[i] = x;
+    }
+    
+    delete [] array;
+    
+    sortArray(newArray, size);
+    
+    return newArray;
+}
+
+void nearestNumber(const int array[], int size, int value)
+{
+    int diff = abs(array[0] - value), index;
+    
+    for (int i = 0; i < size; i++)
+    {
+        if (diff > abs(array[i] - value))
+        {
+            diff = abs(array[i] - value);
+            index = i;
+        }
+    }
+    
+    if (diff < 2)
+    {
+        cout << "Oh man you were so close\n";
+    }
+    else if (diff < 3)
+    {
+        cout << "You were close but not close enough\n";
+    }
+    else if (diff < 10)
+    {
+        cout << "You were way off\n";
+    }
+    else
+    {
+        cout << "Are you even trying?\n";
+    }
+}
 
